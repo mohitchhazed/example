@@ -1,0 +1,40 @@
+Setting up new application on server with supervisor
+
+Login to server
+Install virtualenv if not instaled : sudo aptitude install python-virtualenv
+Switch user to CredTechOps  :   sudo su - CredTechOps
+git clone application repository. For example : git clone http://github.com/Credr/example
+Go to application and create virtual environment  : cd example; virtualenv . ;
+Go to virtual env : source bin/activate
+Install required packages to application using pip : pip install -r requirements.txt
+Install gunicorn if not added in requirement.txt file : pip install gunicorn
+Creating bash script to set some configuration and parameters : vim bin/gunicorn_start
+Copy and paste configuration gunicorn_start file : https://github.com/mohitchhazed/example/gunicorn_start
+Set the executable bit on the gunicorn_start script : sudo chmod u+x bin/gunicorn_start
+Test your gunicorn_start script by running it. Make sure you are in virtual env with credrTechOps user
+credrTechOps@django:~$ bin/gunicorn_start
+Starting and monitoring your application with Supervisor : sudo aptitude install supervisor
+When Supervisor is installed you can give it programs to start and watch by creating configuration files 
+in the /etc/supervisor/conf.d directory. 
+For our example application we’ll create a file named /etc/supervisor/conf.d/example.conf with this content:
+[program:example]
+Create the file to store your application’s log messages :
+credrTechOps@django:~$ mkdir -p /webapps/hello_django/logs/
+credrTechOps@django:~$ touch /webapps/hello_django/logs/gunicorn_supervisor.log
+After you save the configuration file for your program you can ask supervisor to reread configuration files and update (which will start your the newly registered app).
+$sudo supervisorctl reread
+example: available
+$ sudo supervisorctl update
+example: added process group
+You can also check the status of your app or start, stop or restart it using supervisor
+$ sudo supervisorctl status hello                       
+example                            RUNNING    pid 18020, uptime 0:00:50
+$ sudo supervisorctl stop example  
+example: stopped
+$ sudo supervisorctl start example                        
+example: started
+$ sudo supervisorctl restart example 
+example: stopped
+hello: started
+
+
